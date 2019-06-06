@@ -1,0 +1,141 @@
+HW1 : DFS Generation Problem 
+Date: June 04 2019
+-------------------------------------------------------------------------------------------
+Q1:
+-------------------------------------------------------------------------------------------
+39.Combination Sum
+Given a set of candidate numbers (candidates) (without duplicates) and a target number (target), find all unique combinations in candidates where the candidate numbers sums to target.
+The same repeated number may be chosen from candidates unlimited number of times.
+
+Note:
+All numbers (including target) will be positive integers.
+The solution set must not contain duplicate combinations.
+
+-------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack(candidates, res, new ArrayList<>(), target, 0);
+        return res;
+    }
+    public void backtrack (int[] candidates, List<List<Integer>> list, List<Integer> sol, int remain, int start){
+        if (remain< 0)
+            return;
+        else if (remain == 0){
+            list.add(new ArrayList<>(sol));
+        }
+        else{
+            for (int i = start; i < candidates.length; i++){
+                sol.add(candidates[i]);
+                backtrack(candidates, list, sol, remain - candidates[i], i);
+                sol.remove(sol.size()-1);
+            }
+        }
+    }
+}
+
+-------------------------------------------------------------------------------------------
+Q2:
+-------------------------------------------------------------------------------------------
+40. Combination Sum II
+Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates where the candidate numbers sums to target.
+Each number in candidates may only be used once in the combination.
+
+Note:
+All numbers (including target) will be positive integers.
+The solution set must not contain duplicate combinations.
+-------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(candidates);
+        backtrack(candidates, res, new ArrayList<>(), target, 0);
+        return res;
+    }
+    
+    public void backtrack(int[] candidates, List<List<Integer>> list, List<Integer> tempList, int remain, int start){
+        if (remain < 0 ){
+            return;
+        }
+        else if (remain == 0){
+            list.add(new ArrayList<>(tempList));
+        }
+        else{
+            for (int i = start; i < candidates.length; i++){
+                if (i > start && candidates[i] == candidates[i-1])
+                    continue;
+                tempList.add(candidates[i]);
+                backtrack(candidates, list, tempList, remain - candidates[i], i+1);
+                tempList.remove(tempList.size()-1);
+            }
+        }
+    }
+}
+
+-------------------------------------------------------------------------------------------
+Q3:
+-------------------------------------------------------------------------------------------
+216. Combination Sum III
+Find all possible combinations of k numbers that add up to a number n, given that only numbers from 1 to 9 can be used and each combination should be a unique set of numbers.
+
+Note:
+All numbers will be positive integers.
+The solution set must not contain duplicate combinations.
+-------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (n > 45 || k > 9)
+            return res;
+        backtrack(1, n, res, new ArrayList<>(), k);
+        return res;
+    }
+    public void backtrack(int start, int remain, List<List<Integer>> list, List<Integer> tempList, int k){
+        if (remain < 0)
+            return;
+        else if (remain == 0 && k == 0)
+            list.add(new ArrayList<>(tempList));
+        else if (remain > 0 && k == 0)
+            return;
+        else{
+            for (int i = start; i <= 9; i++){
+                tempList.add(i);
+                backtrack(i+1, remain - i, list, tempList, k-1);
+                tempList.remove(tempList.size()-1);
+            }
+        }
+    }
+}
+
+-------------------------------------------------------------------------------------------
+Q4: !!!Not done totally by myself, looked the discussion and understand the algorithms. 
+-------------------------------------------------------------------------------------------
+377. Combination Sum IV
+Given an integer array with all positive numbers and no duplicates, find the number of possible combinations that add up to a positive integer target.
+-------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public int[] dp;
+    public int combinationSum4(int[] nums, int target) {
+        dp = new int [target+1];
+        Arrays.fill(dp,-1);
+        dp[0] = 1;
+        return helper(nums, target);
+    }
+    public int helper(int[] nums, int target){
+        if (dp[target] != -1)
+            return dp[target];
+        int res = 0;
+        for (int i = 0; i < nums.length; i++){
+            if (target >= nums[i]){
+                res += helper(nums, target - nums[i]); 
+            }
+        }
+        dp[target] = res;
+        return res;
+    }
+}
