@@ -1,11 +1,16 @@
+----------------------------------------------------------------------------------------------------------
+HW 2: DFS generating problem 
+----------------------------------------------------------------------------------------------------------
+
+Q1:
+----------------------------------------------------------------------------------------------------------
 78. Subsets
 Given a set of distinct integers, nums, return all possible subsets (the power set).
 Note: The solution set must not contain duplicate subsets.
 
-SOl:
+Sol:
 Thoughts: Everytime add one number from each layer in the loop, add the list into the final results. Everytime exit one layer, remove the last num. 
-
-
+----------------------------------------------------------------------------------------------------------
 class Solution {
     public List<List<Integer>> subsets(int[] nums) {
         List<List<Integer>> res = new ArrayList<>();
@@ -22,4 +27,108 @@ class Solution {
             }
         }
 }
+
+----------------------------------------------------------------------------------------------------------
+Q2:
+----------------------------------------------------------------------------------------------------------
+90. Subsets II
+Given a collection of integers that might contain duplicates, nums, return all possible subsets (the power set).
+Note: The solution set must not contain duplicate subsets.
+
+Sol:
+Thoughts: Basically same as Subsets, needs to avoid duplicates. 
+----------------------------------------------------------------------------------------------------------
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<>());
+        helper(nums, 0, res, new ArrayList<>());
+        return res;
+        
+    }
+    public void helper(int[] nums, int start, List<List<Integer>> list, List<Integer> tempList ){
+        for (int i = start; i < nums.length; i++){
+            if (i != start && nums[i] == nums[i-1]){  //Avoid duplicate numbers in the same layer, which avoid duplicate res 
+                continue;
+            }
+            tempList.add(nums[i]);
+            list.add(new ArrayList<>(tempList));
+            helper(nums, i+1, list, tempList);
+            tempList.remove(tempList.size()-1);
+        }
+    }
+}
+
+----------------------------------------------------------------------------------------------------------
+Q3:
+----------------------------------------------------------------------------------------------------------
+46. Permutations
+Given a collection of distinct integers, return all possible permutations.
+
+Sol:
+----------------------------------------------------------------------------------------------------------
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        helper(nums, 0, res, new ArrayList<>());
+        return res;
+    }
+    public void helper(int[] nums, int index, List<List<Integer>>list, List<Integer> tempList){
+        if (tempList.size() == nums.length){
+            list.add(new ArrayList<>(tempList));
+        }
+        else{
+            for (int i = 0; i < nums.length; i++){
+                if(tempList.contains(nums[i]))
+                    continue;
+                tempList.add(nums[i]);
+                helper(nums, i+1, list, tempList);
+                tempList.remove(tempList.size()-1);
+            }
+        }
+    }
+}
+
+----------------------------------------------------------------------------------------------------------
+Q4:
+----------------------------------------------------------------------------------------------------------
+131. Palindrome Partitioning 
+Given a string s, partition s such that every substring of the partition is a palindrome.
+Return all possible palindrome partitioning of s.
+
+Sol:
+----------------------------------------------------------------------------------------------------------
+class Solution {
+    public List<List<String>> partition(String s) {
+        List<List<String>> list = new ArrayList<>();
+        helper(s, list, new ArrayList<String>(), 0);
+        return list;
+    }
+    public void helper(String s, List<List<String>> list, List<String> tempList, int index){
+        if (index == s.length()){
+            list.add(new ArrayList<String>(tempList));
+            return;
+        }
+        else{
+            for (int i = index; i < s.length(); i++){
+                if (isPal(s, index, i)){
+                    tempList.add(s.substring(index, i+1));
+                    helper(s, list, tempList, i+1);
+                    tempList.remove(tempList.size()-1);
+                }
+            }
+        }
+    }
+    public boolean isPal(String s, int start, int end){
+        while (start < end){
+            if (s.charAt(start) != s.charAt(end))
+                return false;
+            start++;
+            end--;
+        }
+        return true;
+    }
+}
+
 
