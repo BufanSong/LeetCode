@@ -1,0 +1,82 @@
+Weekly Contest 140
+Date: June 08 2019
+Aruthor: Bufan Song
+-------------------------------------------------------------------------------------------------------------------------
+Q1:
+-------------------------------------------------------------------------------------------------------------------------
+5083. Occurrences After Bigram
+Given words first and second, consider occurrences in some text of the form "first second third", where second comes immediately after first, and third comes immediately after second.
+
+For each such occurrence, add "third" to the answer, and return the answer.
+Example 1:
+Input: text = "alice is a good girl she is a good student", first = "a", second = "good"
+Output: ["girl","student"]
+Example 2:
+Input: text = "we will we will rock you", first = "we", second = "will"
+Output: ["we","rock"]
+Note:
+1 <= text.length <= 1000
+text consists of space separated words, where each word consists of lowercase English letters.
+1 <= first.length, second.length <= 10
+first and second consist of lowercase English letters.
+-------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public String[] findOcurrences(String text, String first, String second) {
+        if (text == null || first == null || second == null)
+            return new String[0];
+        List<String> wordList = new ArrayList<String>(Arrays.asList(text.split(" ")));
+        List<String> res = new ArrayList<String>();
+        
+        for (int i = 0; i < wordList.size(); i++){
+            if (i+2 < wordList.size() && wordList.get(i).equals(first) && wordList.get(i+1).equals(second)){
+                res.add(wordList.get(i+2));
+            }
+        }
+        String[] stringRes = res.toArray(new String[0]);
+        return stringRes;
+    }
+}
+
+-------------------------------------------------------------------------------------------------------------------------
+Q2:
+-------------------------------------------------------------------------------------------------------------------------
+5087. Letter Tile Possibilities
+You have a set of tiles, where each tile has one letter tiles[i] printed on it.  Return the number of possible non-empty sequences of letters you can make.
+
+Example 1:
+Input: "AAB"
+Output: 8
+Explanation: The possible sequences are "A", "B", "AA", "AB", "BA", "AAB", "ABA", "BAA".
+
+Example 2:
+Input: "AAABBC"
+Output: 188
+ 
+Note:
+
+1 <= tiles.length <= 7
+tiles consists of uppercase English letters.
+-------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public int numTilePossibilities(String tiles) {
+        int[] count = new int[26];
+        for (int i = 0; i < tiles.length(); i++){
+            count[tiles.charAt(i) - 'A']++;
+        }
+        return dfs(count);
+    }
+    public int dfs(int[]count){
+        int sum = 0;
+        for (int i = 0; i < 26; i++){
+            if (count[i] == 0)
+                continue;
+            sum++;
+            count[i]--;
+            sum += dfs(count);
+            count[i]++;
+        }
+        return sum;
+    }
+}
