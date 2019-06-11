@@ -203,6 +203,9 @@ Initial thoughts based on Hint1. Due to every word in words[], use a for loop to
 In the word for loop, for example(apple), we need to add(apple{apple; pple{apple; ple{apple; le{apple;e{apple; {apple). so 
 when use f(String prefix, String suffix), just need to search the String (suffix + '{' + prefix) either present or not,
 if not present, return -1, if reach the end of the string, need to return the TrieNode's weight as result. 
+// Keep in mind that the TrieNode.children.length has to increase 1 from 26 to 27, due to presence of '{'. In Unicode, '{' is
+right after a-z, so can be use as seperator between suffix and prefix in the new string. Or can use a character that right 
+before a-z in Unicode. 
 -------------------------------------------------------------------------------------------------------------------------------
 Sol:
 class TrieNode{
