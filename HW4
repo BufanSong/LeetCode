@@ -198,6 +198,11 @@ WordFilter.f("a", "e") // returns 0
 WordFilter.f("b", "") // returns -1
 -------------------------------------------------------------------------------------------------------------------------------
 Thoughts:
+Initial thoughts based on Hint1. Due to every word in words[], use a for loop to add every words' combination of suffix + '{'
++ 'prefix' into the TrieTree, and for the TrieNode class, adding one parameter called weight. So TrieNode.weight can be recorded. 
+In the word for loop, for example(apple), we need to add(apple{apple; pple{apple; ple{apple; le{apple;e{apple; {apple). so 
+when use f(String prefix, String suffix), just need to search the String (suffix + '{' + prefix) either present or not,
+if not present, return -1, if reach the end of the string, need to return the TrieNode's weight as result. 
 -------------------------------------------------------------------------------------------------------------------------------
 Sol:
 class TrieNode{
