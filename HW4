@@ -186,3 +186,66 @@ class WordDictionary {
  -------------------------------------------------------------------------------------------------------------------------------
 Q3:
 -------------------------------------------------------------------------------------------------------------------------------
+745. Prefix and Suffix Search
+Given many words, words[i] has weight i.
+
+Design a class WordFilter that supports one function, WordFilter.f(String prefix, String suffix). It will return the word with given prefix and suffix with maximum weight. If no word exists, return -1.
+
+Examples:
+Input:
+WordFilter(["apple"])
+WordFilter.f("a", "e") // returns 0
+WordFilter.f("b", "") // returns -1
+-------------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+-------------------------------------------------------------------------------------------------------------------------------
+Sol:
+class TrieNode{
+    public TrieNode[] children;
+    int weight;
+    public TrieNode(){
+        children = new TrieNode[27];
+        weight = 0;
+    }
+    //public boolean isWordEnd; 
+}
+
+class WordFilter { 
+    
+    TrieNode root = new TrieNode();
+    
+    public WordFilter(String[] words) {
+        for (int weight = 0; weight < words.length; weight++){
+            String word = words[weight] + '{';
+            for (int i = 0; i < word.length(); i++){
+                TrieNode cur = root;
+                cur.weight = weight;
+                for (int j = i; j < word.length() * 2 - 1; j++){
+                    int k = j % word.length();
+                    char c = word.charAt(k);
+                    if (cur.children[c - 'a'] == null){
+                        cur.children[c - 'a'] = new TrieNode();
+                    }
+                    cur = cur.children[c - 'a'];
+                    cur.weight = weight;
+                }
+            }
+        }
+    }
+    
+    public int f(String prefix, String suffix) {
+        TrieNode cur = root;
+        for (char letter : (suffix + '{' + prefix).toCharArray()){
+            if (cur.children[letter - 'a'] == null)
+                return -1;
+            cur = cur.children[letter - 'a'];
+        }
+        return cur.weight;
+    }
+}
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter obj = new WordFilter(words);
+ * int param_1 = obj.f(prefix,suffix);
+ */
