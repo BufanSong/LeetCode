@@ -263,4 +263,89 @@ Q4:
 -------------------------------------------------------------------------------------------------------------------------------
 642. Design Search Autocomplete System
 -------------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+Use two HashMap in the TrieNode class. One HashMap<Character, TrieNode> children for TrieNode structure
+and one HashMap<String, Integer> counts for counting the appearence of sentence times for the prefix. 
+In the AutocompleteSystem function, prefix = "" // empty string, and adding each sentence with countTimes. 
+Build a function called add, iterate the characters in sentence string, adding TrieNode, update children hashmap and 
+count hashmap. 
+For input function, update prefix = prefix + c. If the char is '#', which means the prefix santence reach the end,
+call the add function (add(prefix, 1)) into histroy, and update the prefix to empty string again, output empty string list. 
+For valid character, adding to prefix, and search until the last character of the prefix in Trie. 
+Introduce Map.Entry inorder to adding HashMap<String, Integer> both key and value into PriorityQueue, customize the comparator
+of pq, (a,b)-> a.getValue() == b.getValue() ? a.getKey().compareTo(b.getKey()) : b.getValue() - a.getValue();
+When the countTimes of sentences are same, compare the character of the santences in alphabetical order, if different, 
+sort them in descending order of countTimes. 
+poll out the pirorityqueue 3 times, and store them in arrayList. 
+
+-------------------------------------------------------------------------------------------------------------------------------
 Sol:
+class AutocompleteSystem {
+    class TrieNode{
+        Map<Character, TrieNode> children; // this replace the TrieNode array for children. 
+        Map<String, Integer> counts; // this map records the sentences and count times at the current Trienode. 
+
+        
+        public TrieNode(){
+            children = new HashMap<Character, TrieNode>();
+            counts = new HashMap<String, Integer>();
+        }
+    }
+    TrieNode root;
+    String prefix; // record the current search string
+    
+    public AutocompleteSystem(String[] sentences, int[] times) {
+        root = new TrieNode();
+        prefix = "";
+        
+        for (int i = 0; i < sentences.length; i++){
+            add(sentences[i], times[i]);
+        }
+    }
+    
+    private void add(String s, int count){
+        TrieNode cur = root;
+        for (char c : s.toCharArray()){
+            TrieNode next = cur.children.get(c); 
+            if (next == null){
+                next = new TrieNode();
+                cur.children.put(c, next);
+            }
+            cur = next;
+            cur.counts.put(s, cur.counts.getOrDefault(s, 0) + count); // update the current TrieNode sentences count. 
+        }
+    }
+    
+    public List<String> input(char c) {
+        if (c == '#'){
+            add(prefix, 1);
+            prefix = "";
+            return new ArrayList<String>();
+        }
+        prefix = prefix + c;
+        TrieNode cur = root;
+        for (char cc : prefix.toCharArray()){
+            TrieNode next = cur.children.get(cc);
+            if (next == null){
+                return new ArrayList<String>();
+            }
+            cur = next;
+        }
+        PriorityQueue<Map.Entry<String, Integer>> pq =
+            new PriorityQueue<>((a,b) -> (a.getValue() == b.getValue() ? a.getKey().compareTo(b.getKey()) : b.getValue() - a.getValue()));
+        pq.addAll(cur.counts.entrySet());
+        List<String> res = new ArrayList<String>();
+        int k = 3;
+        while (!pq.isEmpty() && k > 0){
+            res.add((String) pq.poll().getKey());
+            k--;
+        }
+        return res;
+    }
+}
+
+/**
+ * Your AutocompleteSystem object will be instantiated and called as such:
+ * AutocompleteSystem obj = new AutocompleteSystem(sentences, times);
+ * List<String> param_1 = obj.input(c);
+ */
