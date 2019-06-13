@@ -45,3 +45,45 @@ public List<Integer> inorderTraversal(TreeNode root){
         }
         return res;
 }
+
+---------------------------------------------------------------------------------------------------------------------------
+Q2:
+---------------------------------------------------------------------------------------------------------------------------
+144. Binary Tree Preorder Traversal
+Given a binary tree, return the preorder traversal of its nodes' values.
+---------------------------------------------------------------------------------------------------------------------------
+Recursion Sol:
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        helper(root, res);
+        return res;
+    }
+    public void helper(TreeNode node, List<Integer> list){
+        if (node != null){
+            list.add(node.val);
+            helper(node.left, list);
+            helper(node.right, list);
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+Iterative Sol:
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        
+        while (node != null || !stack.isEmpty()){
+            while(node != null){
+                stack.push(node);
+                res.add(node.val);
+                node = node.left;
+            }
+            node = stack.pop();
+            node = node.right;
+        }
+        return res;
+    }
+}
