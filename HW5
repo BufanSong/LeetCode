@@ -1,4 +1,47 @@
-#HW5. Tree Traversal
+HW5. Tree Traversal
 Date:June 12 2019
 Bufan Song
 ---------------------------------------------------------------------------------------------------------------------------
+Q1:
+---------------------------------------------------------------------------------------------------------------------------
+94. Binary Tree Inorder Traversal
+Given a binary tree, return the inorder traversal of its nodes' values.
+---------------------------------------------------------------------------------------------------------------------------
+Recursion Sol:
+class Solution {
+    
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        helper(root, res);
+        return res;
+    }
+    public void helper(TreeNode node, List<Integer> list){
+        if (node != null){
+            helper(node.left, list);
+            list.add(node.val);
+            helper(node.right, list);
+        }
+    }
+}
+
+Iterative Sol:
+Thoughts: Use stack, while has left child, push it into stack. If no longer has left child, pop the node in the stack out,
+adding the lefest node.val into result, and then search the right child, which let node = node.right; 
+
+public List<Integer> inorderTraversal(TreeNode root){
+        List<Integer> res = new ArrayList<>();
+        if (root == null)
+            return res;
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (node != null || !stack.isEmpty()){
+            while (node != null){
+                stack.push(node);
+                node = node.left;
+            }
+            node = stack.pop();
+            res.add(node.val);
+            node = node.right;
+        }
+        return res;
+}
