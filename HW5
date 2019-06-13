@@ -131,3 +131,65 @@ class Solution {
         return res;
     }
 }
+
+---------------------------------------------------------------------------------------------------------------------------
+Q4:
+---------------------------------------------------------------------------------------------------------------------------
+314. Binary Tree Vertical Order Traversal
+Given a binary tree, return the vertical order traversal of its nodes' values. (ie, from top to bottom, column by column).
+
+If two nodes are in the same row and column, the order should be from left to right.
+---------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+Create two maps, one to record <position, List<node.val>>, one to record <TreeNode, position>. When BFS to tree,
+left child has the position -1, right child has the position +1, and get the list of that position, add the node value
+into the list. When traversed the tree, create a priorityqueue, sort the <position, List<node.val>> map in ascending
+order based on map.getKey, and poll out the set value, add the list into final results.
+---------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null)
+            return res;
+        Map<Integer, List<Integer>> posNodeMap = new HashMap<>();
+        Map<TreeNode, Integer> nodePosMap = new HashMap<>();
+        nodePosMap.put(root, 0);
+        Queue<TreeNode> bfsQueue = new LinkedList<>();
+        bfsQueue.add(root);
+        
+        while (!bfsQueue.isEmpty()){
+            int size = bfsQueue.size();
+            for (int i = 0; i < size; i++){
+                TreeNode node = bfsQueue.poll();
+                int position = nodePosMap.get(node);
+                if (!posNodeMap.containsKey(position)){
+                    List<Integer> list = new ArrayList<>();
+                    list.add(node.val);
+                    posNodeMap.put(position, list);
+                }
+                else{
+                    List<Integer> list = posNodeMap.get(position);
+                    list.add(node.val);
+                    posNodeMap.put(position, list);
+                }
+                
+                if (node.left != null){
+                    bfsQueue.add(node.left);
+                    nodePosMap.put(node.left, position - 1);
+                }
+                if (node.right != null){
+                    bfsQueue.add(node.right);
+                    nodePosMap.put(node.right, position + 1);
+                }
+            }
+        }
+        PriorityQueue<Map.Entry<Integer, List<Integer>>> pq = new PriorityQueue<>((a,b) -> a.getKey() - b.getKey());
+        pq.addAll(posNodeMap.entrySet());
+        
+        while (!pq.isEmpty()){
+            res.add(pq.poll().getValue());
+        }
+        return res;
+    }
+}
