@@ -87,3 +87,46 @@ class Solution {
         return res;
     }
 }
+
+---------------------------------------------------------------------------------------------------------------------------
+Q3:
+---------------------------------------------------------------------------------------------------------------------------
+145. Binary Tree Postorder Traversal
+Given a binary tree, return the postorder traversal of its nodes' values.
+---------------------------------------------------------------------------------------------------------------------------
+Recursion Sol:
+class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        helper(root, res);
+        return res;
+    }
+    public void helper(TreeNode node, List<Integer> list){
+        if (node != null){
+            helper(node.left, list);
+            helper(node.right, list);
+            list.add(node.val);
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+Iterative Sol:
+class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (!stack.isEmpty() || node != null){
+            if (node != null){
+                stack.push(node);
+                res.add(0, node.val);
+                node = node.right;
+            }
+            else{
+                node = stack.pop();
+                node = node.left;
+            }
+        }
+        return res;
+    }
+}
