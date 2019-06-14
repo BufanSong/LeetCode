@@ -46,6 +46,35 @@ public List<Integer> inorderTraversal(TreeNode root){
         return res;
 }
 
+No Extra Space Sol:
+Morris Traversal:
+Thoughts:
+if root.left is none, then add the node value into res, and node = node.right, if node.left is not null, 
+than create node called pre, make the current node to the node.left's node's rightest node's right child. 
+
+public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        TreeNode node = root;
+        TreeNode pre;
+        while (node != null){
+            if (node.left == null){
+                res.add(node.val);
+                node = node.right; 
+            }
+            else{
+                pre = node.left;
+                while (pre.right != null){
+                    pre = pre.right;
+                }
+                // connect the current node to the rightest node of the left subtree. 
+                pre.right = node;
+                TreeNode temp = node;
+                node = node.left; // move the current node to the left node
+                temp.left = null; // break the loop, make the previous current node has no left child
+            }
+        }
+        return res;
+    }
 ---------------------------------------------------------------------------------------------------------------------------
 Q2:
 ---------------------------------------------------------------------------------------------------------------------------
