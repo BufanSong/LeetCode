@@ -1,0 +1,51 @@
+HW6. Binary Search
+Date: June 17 2019
+Bufan Song
+-------------------------------------------------------------------------------------------------------------------------------
+BiSearch Templete:
+Recursion:
+public int biSearch(List<Integer> list, int target){
+  int index;
+  helper(list, 0, list.length()-1, target);
+  return index;
+}
+public void helper(List<Integer> list, int l, int r, int target){
+  if (l > r){
+    index = -1;
+    return;
+    }
+  int mid = l + (r - l)/2;
+  if (list.get(mid) == target){
+      index = mid;
+      return;
+      }
+  if (list.get(mid) < target){
+      helper(list, mid, r, target);
+    }
+  else if(list.get(mid) > target{
+      helper(list, l, mid, target);
+  }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+Iterative: 
+public int biSearch(List<Integer> list, int target){
+    if (list == null || list.length() == 0)
+      return -1;
+    if (target < list.get(0) || target > list.get(list.length()-1))
+      return -1;
+   
+    int l = 0, r = list.length()-1;
+    while (l < r){
+      int mid = l + (r-l)/2;
+      if (list.get(mid) == target)
+          return mid;
+      else if (list.get(mid) < target)
+          l = mid;
+      else
+          r = mid;
+    }
+    if (list.get(l + (r-l)/2) == target)
+      return (l + (r-l)/2);
+    else
+      return -1;
+}
