@@ -56,3 +56,40 @@ public int biSearch(List<Integer> list, int target){
         return r;
     return -1;
 }
+
+-------------------------------------------------------------------------------------------------------------------------------
+35. Search Insert Position
+Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+You may assume no duplicates in the array.
+-------------------------------------------------------------------------------------------------------------------------------
+class Solution {
+    int index;
+    public int searchInsert(int[] nums, int target) {
+        helper(nums, 0, nums.length -1, target);
+        return index;
+    }
+    public void helper(int[] nums, int l, int r, int target){
+        if (l >= r){
+            if (nums[l] >= target){
+                index = l;
+                return;
+            }
+            else if (nums[l] < target){
+                index = l+1;
+                return;
+            }
+        }
+        int mid = l + (r - l)/2;
+        if (nums[mid] == target){
+                index = mid;
+                return;
+            }
+        if (nums[mid] < target){
+              helper(nums, mid + 1, r, target);
+         }
+        else if(nums[mid] > target){
+              helper(nums, l, mid-1, target);
+         }
+    }
+}
