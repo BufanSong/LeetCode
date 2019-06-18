@@ -1,0 +1,110 @@
+Contest 141
+Date: June 15 2019
+Bufan Song
+-------------------------------------------------------------------------------------------------------------------------------
+1089. Duplicate Zeros
+
+Given a fixed length array arr of integers, duplicate each occurrence of zero, shifting the remaining elements to the right.
+
+Note that elements beyond the length of the original array are not written.
+Do the above modifications to the input array in place, do not return anything from your function.
+Example 1:
+Input: [1,0,2,3,0,4,5,0]
+Output: null
+Explanation: After calling your function, the input array is modified to: [1,0,0,2,3,0,0,4]
+Example 2:
+Input: [1,2,3]
+Output: null
+Explanation: After calling your function, the input array is modified to: [1,2,3]
+-------------------------------------------------------------------------------------------------------------------------------
+Sol:
+Thoughts:
+Iterative change inplace the rest everytime incounter the zero, unefficient. 
+class Solution {
+    public void duplicateZeros(int[] arr) {
+        for (int i = 0; i < arr.length; i++){
+            if (arr[i] == 0 && i + 1 < arr.length){
+                int index = i + 1;
+                int temp = arr[index];
+                arr[index] = 0;
+                while (index + 1 < arr.length){
+                    int temp2 = arr[index + 1];
+                    arr[index + 1] = temp;
+                    temp = temp2;
+                    index++;
+                }
+                i += 1;
+            }
+            
+        }
+    }
+}
+Updated Methods:
+Thoughts: count the zeros, and change the number inplace backward. 
+class Solution {
+    public void duplicateZeros(int[] arr) {
+        int countZero = 0;
+        for(int i = 0;i<arr.length;i++){
+            if(arr[i] == 0) countZero++;
+        }
+        int len = arr.length + countZero;
+        //We just need O(1) space if we scan from back
+        //i point to the original array, j point to the new location
+        for(int i = arr.length - 1, j = len - 1;i>=0 && j>=0;i--,j--){
+            if(arr[i] != 0){
+                if(j<arr.length) arr[j] = arr[i];
+            }else{
+                if(j<arr.length) arr[j] = arr[i];
+                j--;
+                if(j<arr.length) arr[j] = arr[i];//copy twice when hit '0'
+            }
+        }
+    
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+1090. Largest Values From Labels
+We have a set of items: the i-th item has value values[i] and label labels[i].
+
+Then, we choose a subset S of these items, such that:
+|S| <= num_wanted
+For every label L, the number of items in S with label L is <= use_limit.
+Return the largest possible sum of the subset S.
+
+Example 1:
+
+Input: values = [5,4,3,2,1], labels = [1,1,2,2,3], num_wanted = 3, use_limit = 1
+Output: 9
+Explanation: The subset chosen is the first, third, and fifth item.
+-------------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+Use Priority Queue to store the Value and Label in int[2], in descending order based on value in int[0]. Use hashmap to store
+counting of the labels, first set all exsiting labels with counting value 0. While poll out the pq from the largest value, first
+check if the values' label in hashmap greater than the use_limit, if not, add into sum, and update the hashmap counting +1, and
+update the number we chose +1. If the number we chose is reach the num_wanted, then break and return sum. Otherwise keep poll out
+from the pq. 
+-------------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public int largestValsFromLabels(int[] values, int[] labels, int num_wanted, int use_limit) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)-> b[0] - a[0]);
+        
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < labels.length; i++){
+            if (!map.containsKey(labels[i])) map.put(labels[i], 0);
+            pq.add(new int[] {values[i], labels[i]});
+        }
+        int max = 0, count = 0;
+        
+        while (!pq.isEmpty()){
+            int[] curr = pq.poll();
+            if (map.get(curr[1]) < use_limit){
+                max += curr[0];
+                map.put(curr[1], map.get(curr[1])+1);
+                if (++count == num_wanted)
+                    break;
+            }
+        }
+        return max;
+    }
+}
