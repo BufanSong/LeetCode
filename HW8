@@ -87,3 +87,43 @@ class Solution {
         return dp[n];
     }
 }
+
+-----------------------------------------------------------------------------------------------------------------------------
+Q3:
+322. Coin Change
+You are given coins of different denominations and a total amount of money amount. Write a function to compute the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
+
+Example 1:
+Input: coins = [1, 2, 5], amount = 11
+Output: 3 
+Explanation: 11 = 5 + 5 + 1
+Example 2:
+Input: coins = [2], amount = 3
+Output: -1
+-----------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+Bottom up solution similar to Q2, need to sort the coin array first. Create a dp array to store the fewest number of coins for
+the current amount. Increase the amount from 1 to the desired amount. Fill the dp array first with the value of amount+1, which
+we dont use int max value in order to avoid the boundary problem when we +1. While is dp[amount] value is greater than amount,
+then there is no solution, otherwise output the value. 
+-----------------------------------------------------------------------------------------------------------------------------
+Bottom-up Sol:
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int [amount+1];
+        Arrays.sort(coins);
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+        for (int i = 1; i <= amount; i++){
+            for (int j = 0; j < coins.length && coins[j] <= i; j++){
+                dp[i] = Math.min(dp[i], dp[i - coins[j]] +1);
+            }
+        }
+        if (dp[amount] > amount)
+            return -1;
+        return dp[amount];
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------
+Top down Sol:
+
