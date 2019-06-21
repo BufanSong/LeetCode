@@ -125,5 +125,44 @@ class Solution {
     }
 }
 -----------------------------------------------------------------------------------------------------------------------------
-Top down Sol:
-
+Q4: 
+403. Frog Jump
+A frog is crossing a river. The river is divided into x units and at each unit there may or may not exist a stone. The frog can jump on a stone, but it must not jump into the water.
+Given a list of stones' positions (in units) in sorted ascending order, determine if the frog is able to cross the river by landing on the last stone. Initially, the frog is on the first stone and assume the first jump must be 1 unit.
+If the frog's last jump was k units, then its next jump must be either k - 1, k, or k + 1 units. Note that the frog can only jump in the forward direction.
+-----------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+Use a HashMap<Integer, HashSet<Integer>> map to record all the possible reach distance at the specific stone index. First create 
+a empty HashSet for each stone index. Add the first stone index 0  with reach 1 as default,then when we iterate the stones in the
+for loop, calculate the index that the frog can jump from current stone to based on the reach distance set. If the index + reach 
+is equal to the last stone index, then return true, otherwise if it is in the map, then add the reach distance into the (index +
+reach) stone, and add (if satisfy) reach - 1 and reach +1. If iterate all the stone index, and could not get the last stone 
+index based on the current stone index + reach, then return false;
+-----------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public boolean canCross(int[] stones) {
+        HashMap<Integer, HashSet<Integer>> map = new HashMap<>();
+        for (int i = 0; i < stones.length; i++){
+            map.put(stones[i], new HashSet<Integer>());
+        }
+        map.get(0).add(1);
+        for (int i = 0; i < stones.length; i++){
+            int stone = stones[i];
+            for (int step : map.get(stone)){
+                int reach = stone + step;
+                if (reach == stones[stones.length - 1])
+                    return true;
+                if (map.containsKey(reach)){
+                    HashSet<Integer> set = map.get(reach);
+                    set.add(step);
+                    if (step - 1 > 0)
+                        set.add(step - 1);
+                    set.add(step + 1);
+                }
+                
+            }
+        }
+        return false;
+    }
+}
