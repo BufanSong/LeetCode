@@ -62,8 +62,9 @@ Output: 2
 Explanation: It could be decoded as "AB" (1 2) or "L" (12).
 -----------------------------------------------------------------------------------------------------------------------------
 Thoughts:
-Because it is an non-empty string, so min length is 1. Need to consider two cases, one is if the current index satisfy the range
-1-9 for a valid digit, and second is if the previous index + current index satisfy the range of 10-26 for a valid digit. 
+Conside the string has only length 1, then res = 1. When the length larger than 1, need to consider two cases, one is if 
+the current index satisfy the range 1-9 for a valid digit, and second is if the previous index + current index satisfy the 
+range of 10-26 for a valid digit. 
 -----------------------------------------------------------------------------------------------------------------------------
 Sol:
 class Solution {
