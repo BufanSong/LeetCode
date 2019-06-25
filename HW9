@@ -47,4 +47,82 @@ class Solution {
         
     }
 }
+-----------------------------------------------------------------------------------------------------------------------------
+Q2:
+91. Decode Ways
+A message containing letters from A-Z is being encoded to numbers using the following mapping:
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+Given a non-empty string containing only digits, determine the total number of ways to decode it.
+Example 1:
+Input: "12"
+Output: 2
+Explanation: It could be decoded as "AB" (1 2) or "L" (12).
+-----------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+Because it is an non-empty string, so min length is 1. Need to consider two cases, one is if the current index satisfy the range
+1-9 for a valid digit, and second is if the previous index + current index satisfy the range of 10-26 for a valid digit. 
+-----------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public int numDecodings(String s) {
+        int[] dp = new int[s.length()];
+        
+        dp[0] = s.charAt(0) != '0' ? 1 : 0; 
+        
+        for (int i = 1; i < s.length(); i++){
+            int first = s.charAt(i) - '0';
+            int second = Integer.valueOf(s.substring(i - 1, i + 1));
+            if (first >= 1 && first <= 9){
+                dp[i] += dp[i-1];
+            }
+            if (second >= 10 && second <= 26){
+                dp[i] += i>= 2 ? dp[i-2] : 1;
+            }
+        }
+        return dp[s.length() - 1];
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------
+Q3:
+312. Burst Balloons
+Given n balloons, indexed from 0 to n-1. Each balloon is painted with a number on it represented by array nums. You are asked to burst all the balloons. If the you burst balloon i you will get nums[left] * nums[i] * nums[right] coins. Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
+
+Find the maximum coins you can collect by bursting the balloons wisely.
+
+Note:
+You may imagine nums[-1] = nums[n] = 1. They are not real therefore you can not burst them.
+0 ≤ n ≤ 500, 0 ≤ nums[i] ≤ 100
+-----------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public int maxCoins(int[] nums) {
+        int len = nums.length; 
+        int[] new_nums = new int[len + 2];
+        
+        for (int i = 0; i < nums.length; i++)
+            new_nums[i+1] = nums[i];
+        new_nums[0] = new_nums[len+1] = 1; // build the left and right boundary, 1.
+        
+        int[][] memo = new int[len + 2][len + 2];
+        return dp(memo, new_nums, 0, len+1);
+    }
+    public int dp (int[][] memo, int[] nums, int left, int right){
+        if (left + 1 == right)
+            return 0;
+        
+        if (memo[left][right] > 0 )
+            return memo[left][right];
+        
+        int ans = 0;
+        for (int i = left + 1; i < right; i++){
+            ans = Math.max(ans, nums[left] * nums[i] * nums[right] + dp(memo, nums, left, i) + dp(memo, nums, i, right));
+        }
+        memo[left][right] = ans;
+        return ans;
+    }
+}
+
 
