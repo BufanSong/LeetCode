@@ -125,5 +125,48 @@ class Solution {
         return ans;
     }
 }
-
+-----------------------------------------------------------------------------------------------------------------------------
+Q4:
+568. Maximum Vacation Days
+Link: https://leetcode.com/problems/maximum-vacation-days/
+-----------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public int maxVacationDays(int[][] flights, int[][] days) {
+        // corner cases
+        if (flights == null || flights.length == 0 || days == null || days.length == 0 || days[0].length == 0 || flights[0].length == 0)
+            return 0; 
+        int city = days.length;
+        int week = days[0].length;
+        int[][] dp = new int[city][week];
+        for (int[] dpRow : dp)
+            Arrays.fill(dpRow, -1);
+        dp[0][0] = days[0][0]; // week 1 in city 0 as default, it is certian
+        for (int i = 0; i < city; i++){
+            if (flights[0][i] == 1) // if city 0 to other city has flight (1)
+                dp[i][0] = days[i][0];
+        }
+        // current week only depend on previous week, so start from 1 to the end week
+        // the largest days for the dest city in k week is depend on k-1 week from 
+        // the largest day value saved in dp[depart][k-1], save the max one. 
+        for (int k = 1; k < week; k++){
+            for (int dest = 0; dest < city; dest++){ 
+                for (int depart = 0; depart < city; depart++){ 
+                    // the depart city only can reach the dest city when the depart
+                    // city has flight to dest city, or stay at the same city
+                    if (dp[depart][k - 1] != -1 && (flights[depart][dest] == 1 || depart == dest)){
+                        dp[dest][k] = Math.max(dp[dest][k], dp[depart][k-1] + days[dest][k]); 
+                    }
+                }
+            }
+        }
+        // find the largest day value from the citys in final week 
+        int res = 0;
+        for (int i = 0; i < city; i++){
+            if (dp[i][week-1] > res)
+                res = dp[i][week-1];
+        }
+        return res;
+    }
+}
 
