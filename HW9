@@ -18,12 +18,25 @@ horse -> rorse (replace 'h' with 'r')
 rorse -> rose (remove 'r')
 rose -> ros (remove 'e')
 -----------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+for word1 with length m, and word2 with length n. Create a 2d dp[m+1][n+1] array to store the min cost of replace, insert and delate.
+For the first row and first col, set the cost with cur col and row index, which assume every character needs to aither replace
+insert or delete. 
+The core idea is, when we go through the dp 2d array in two for loop, the cost of character i in word1 convert to character
+j in word2, cost[i+1][j+1] (here due to we add one index for each of row and col, so it is i+1 and j+1)has two cases. 
+First case is when the i in word1 and j in word2 are equal, then the cost is equal to i-1 and j-1 in cost array. 
+Second case is when the i in word1 and j in word 2 are different, then three operations. 
+1st operation, replace, then cost[i][j] = cost[i-1][j-1]+1 -> cost[i+1][j+1] = cost[i][j] +1.
+2nd operation, insert, then cost[i][j] = cost[i][j-1] +1 -> cost[i+1][j+1] = cost[i+1][j] + 1;
+3nd operation, delete, then cost[i][j] = cost[i-1][j] + 1 -> cost[i+1][j+1] = cost[i][j+1] + 1;
+Find the minimum cost from these three operations. 
+-----------------------------------------------------------------------------------------------------------------------------
 Sol:
 class Solution {
     public int minDistance(String word1, String word2) {
         int m = word1.length();
         int n = word2.length();
-        int[][] cost = new int[m+1][n+1];
+        int[][] cost = new int[m+1][n+1]; 
         for (int i = 0; i <= m; i++){
             cost[i][0] = i;
         }
@@ -37,18 +50,17 @@ class Solution {
                     cost[i+1][j+1] = cost[i][j];
                 else{
                     int replace = cost[i][j];
-                    int insert = cost[i][j+1];
-                    int delete = cost[i+1][j];
+                    int delete = cost[i][j+1];
+                    int insert = cost[i+1][j];
                     cost[i+1][j+1] = Math.min(replace, Math.min(insert, delete))+1;
                 }
             }
         }
-        return cost[m][n];
-        
+        return cost[m][n];  
     }
 }
 -----------------------------------------------------------------------------------------------------------------------------
-Q2:
+Q1:
 91. Decode Ways
 A message containing letters from A-Z is being encoded to numbers using the following mapping:
 'A' -> 1
@@ -87,7 +99,7 @@ class Solution {
     }
 }
 -----------------------------------------------------------------------------------------------------------------------------
-Q3:
+Q2:
 312. Burst Balloons
 Given n balloons, indexed from 0 to n-1. Each balloon is painted with a number on it represented by array nums. You are asked to burst all the balloons. If the you burst balloon i you will get nums[left] * nums[i] * nums[right] coins. Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
 
