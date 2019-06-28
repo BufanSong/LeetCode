@@ -2,6 +2,104 @@ HW7 Disjiont Set
 Date: June 19 2019
 Bufan Song
 ---------------------------------------------------------------------------------------------------------------------------------------------
+Initial Disjiont Set:
+UNION-FIND Class:
+
+public class UnionFind{
+
+	// The number of elements in the union find
+	private int size;
+
+	// Used to track the size of each of component 
+	private int[] sz;
+
+	// id[i] points to the parent of i, if id[i] = i then i is the root node
+	private int[] id;
+
+	// Tracks the number of components in the union find
+	private int numComponents;
+
+	public UnionFind(int size) {
+
+		if (size <= 0) throw new IllegalArgumentException("Size <= 0 is not allowed");
+
+		this.size = numComponents = size;
+		sz = new int [size];
+		id = new int[size];
+
+		for (int i = 0; i < size; i++){
+			id[i] = i; // Link to itself (self-root)
+			sz[i] = 1; // Each component is default as the size of one
+		}
+	}
+
+	// Find which component/set 'p' belongs to
+	public int find(int p) {
+
+		// Find the root of the component/set
+		int root = p;
+		while (root != id[root]){
+			root = id[root];
+		}
+
+		// Compress the path leading back to root
+		// Called "Path Compressionn"
+		// which give us amortized time complexity
+		while (p != root){
+			int next = id[p];
+			id[p] = root;
+			p = next;
+		}
+
+		return root;
+	}
+
+	// Return whether or not the element 'p'
+	// and 'q' are in the same componets/set
+	public boolean connected (int p, int q) {
+		return find(p) == find(q);
+	}
+
+	// Return the size of the components/set 'p' belongs to
+	public int componentSize(int p){
+		return sz[find[p]];
+	}
+
+	// Return the number of elements in this UnionFind Set
+	public int size() {
+		return size;
+	}
+
+	// Return the number of remaining components/sets
+	public int components() {
+		return numComponents;
+	}
+
+	// Unify the components/ sets containing elements 'p' and 'q'
+	public void unify (int p, int q){
+
+		int root1 = find(p);
+		int root2 = find(q);
+
+		// These elements are in the same group
+		if (root1 == root2) return;
+
+		// Merge smaller size component into larger one
+		if (sz[root1] < sz[root2]){
+			sz[root2] += sz[root1];
+			id[root1] = root2;
+		}else{
+			sz[root1] += sz[root2];
+			id[root2] = root1;
+		}
+		// If unified, then the number of components must be decreased by one
+		numComponents--;
+		
+	}
+}
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
 Q1: 
 305. Number of Islands II
 A 2d grid map of m rows and n columns is initially filled with water. We may perform an addLand operation which turns the water at position (row, col) into a land. Given a list of positions to operate, count the number of islands after each addLand operation. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
@@ -12,43 +110,136 @@ Output: [1,1,2,3]
 ---------------------------------------------------------------------------------------------------------------------------------------------
 Sol:
 class Solution {
-    int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
     
-    public List<Integer> numIslands2(int m, int n, int[][] positions) {
-        List <Integer> res = new ArrayList<>();
-        if (m <= 0 || n <= 0) return res;
-        
-        int count = 0;
-        int[]roots = new int [m * n];
-        Arrays.fill(roots, -1);
-        
-        for (int[] p : positions){
-            int root = n * p[0] + p[1];
-            if (roots[root] != -1){
-                res.add(count);
-                continue;   
+    public class UnionFind{
+
+        // The number of elements in the union find
+        private int size;
+
+        // Used to track the size of each of component 
+        private int[] sz;
+
+        // id[i] points to the parent of i, if id[i] = i then i is the root node
+        private int[] id;
+
+        // Tracks the number of components in the union find
+        private int numComponents;
+
+        public UnionFind(int size) {
+
+            if (size <= 0) throw new IllegalArgumentException("Size <= 0 is not allowed");
+
+            this.size = numComponents = size;
+            sz = new int [size];
+            id = new int[size];
+
+            for (int i = 0; i < size; i++){
+                id[i] = -1; 
+                sz[i] = 1; // Each component is default as the size of one
             }
-            roots[root] = root;
+        }
+
+        // Find which component/set 'p' belongs to
+        public int find(int p) {
+
+            // Find the root of the component/set
+            int root = p;
+            while (root != id[root]){
+                root = id[root];
+            }
+
+            // Compress the path leading back to root
+            // Called "Path Compressionn"
+            // which give us amortized time complexity
+            while (p != root){
+                int next = id[p];
+                id[p] = root;
+                p = next;
+            }
+
+            return root;
+        }
+
+        // Return whether or not the element 'p'
+        // and 'q' are in the same componets/set
+        public boolean connected (int p, int q) {
+            return find(p) == find(q);
+        }
+
+        // Return the size of the components/set 'p' belongs to
+        // public int componentSize(int p){
+        //     return sz[find[p]];
+        // }
+
+        // Return the number of elements in this UnionFind Set
+        public int size() {
+            return size;
+        }
+
+        // Return the number of remaining components/sets
+        public int components() {
+            return numComponents;
+        }
+
+        // Unify the components/ sets containing elements 'p' and 'q'
+        public boolean unify (int p, int q){
+
+            int root1 = find(p);
+            int root2 = find(q);
+
+            // These elements are in the same group
+            if (root1 == root2) return false;
+
+            // Merge smaller size component into larger one
+            if (sz[root1] < sz[root2]){
+                sz[root2] += sz[root1];
+                id[root1] = root2;
+            }else{
+                sz[root1] += sz[root2];
+                id[root2] = root1;
+            }
+            // If unified, then the number of components must be decreased by one
+            numComponents--;
+            return true;
+
+        }
+    }
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        List<Integer> res = new ArrayList<>();
+        if (m == 0 || n == 0 || positions == null || positions.length == 0 ||
+           positions[0].length == 0)
+            return res;
+        int count = 0;
+        int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        UnionFind uf = new UnionFind(m * n);
+        for (int[] position : positions){
+            int x = position[0];
+            int y = position[1];
+            int p = x * n + y;
+            if(uf.id[p] != -1){ // duplicate position
+                res.add(count);
+                continue;
+            }
+            uf.id[p] = p;
             count++;
-            
-            for (int[] dir : dirs){
-                int x = p[0] + dir[0];
-                int y = p[1] + dir[1];
-                int tot = x * n + y;
-                if (x < 0 || x >= m || y < 0 || y >= n || roots[tot] == -1) continue;
-                int roottot = findRoot(roots, tot);
-                if (root != roottot){
-                    roots[root] = roottot; // union two island if they are neighbors. 
-                    root = roottot; // update the root to the joined tree root, and find other neightbors. 
-                    count--;
+            for (int[] dir : dirs) {
+                int r = x + dir[0];
+                int c = y + dir[1];
+                if (isValid(uf, m, n, r, c)) {
+                    int q = r * n + c;
+                    if (uf.unify ( p, q)){
+                        count--;
+                    }
                 }
             }
             res.add(count);
         }
         return res;
     }
-    public int findRoot(int[] roots, int id){
-        while (roots[id] != id) id = roots[id];
-        return id;
+    private boolean isValid(UnionFind uf, int m, int n, int r, int c){
+        if (r < 0 || r >= m || c < 0 || c >= n || uf.id[r * n + c] == -1){
+            return false;
+        }
+        return true;
     }
 }
