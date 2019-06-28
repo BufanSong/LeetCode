@@ -243,3 +243,72 @@ class Solution {
         return true;
     }
 }
+---------------------------------------------------------------------------------------------------------------------------------------
+Q2:
+684. Redundant Connection
+Links: https://leetcode.com/problems/redundant-connection/
+In this problem, a tree is an undirected graph that is connected and has no cycles.
+The given input is a graph that started as a tree with N nodes (with distinct values 1, 2, ..., N), with one additional edge added. The added edge has two different vertices chosen from 1 to N, and was not an edge that already existed.
+The resulting graph is given as a 2D-array of edges. Each element of edges is a pair [u, v] with u < v, that represents an undirected edge connecting nodes u and v.
+Return an edge that can be removed so that the resulting graph is a tree of N nodes. If there are multiple answers, return the answer that occurs last in the given 2D-array. The answer edge [u, v] should be in the same format, with u < v.
+
+Example 1:
+Input: [[1,2], [1,3], [2,3]]
+Output: [2,3]
+Explanation: The given undirected graph will be like this:
+  1
+ / \
+2 - 3
+---------------------------------------------------------------------------------------------------------------------------------------------
+Sol：
+class Solution {
+    public int[] findRedundantConnection(int[][] edges) {
+        UnionFind uf = new UnionFind (edges.length);
+        for (int[] edge : edges){
+            if (!uf.union( edge[0] - 1, edge[1] - 1))
+                return edge;
+        }
+        throw new AssertionError();
+    }
+}
+
+class UnionFind{
+    int[] id;
+    int[] sz;
+    
+    public UnionFind (int size) {
+        id = new int [size];
+        sz = new int [size];
+        for (int i = 0; i < size; i++){
+            id[i] = i;
+            sz[i] = 1;
+        }
+    }
+    public int find (int p){
+        int root = p;
+        while (id[root] != root){
+            root = id[root];
+        }
+        
+        while (p != root){
+            int next = id[p];
+            id[p] = root;
+            p = next;
+        }
+        return root;
+    }
+    public boolean union (int p, int q) {
+        int rootp = find(p);
+        int rootq = find(q);
+        if (rootp == rootq)
+            return false;
+        if (sz[rootp] >= sz[rootq]){
+            id[rootq] = rootp;
+            sz[rootp] += sz[rootq]; 
+        }else{
+            id[rootp] = rootq;
+            sz[rootq] += sz[rootp];
+        }
+        return true;
+    }
+}
