@@ -312,3 +312,76 @@ class UnionFind{
         return true;
     }
 }
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Q3:
+721. Accounts Merge
+https://leetcode.com/problems/accounts-merge/
+---------------------------------------------------------------------------------------------------------------------------------------------
+Thoughts:
+Use HashMap to store the email links to account idx, if there is the repeated email in the map, then find its idx based on
+map, and another one is based on the current idx, if they are diferrent, then change the idx current to the map idx. Then
+use another hashMap to store the owner idx to emails, get everyowener's emails from accounts, use the previous map to get
+the current account's owner idx, and store in the new hashmap, with treeSet for ordering. 
+Then loop through the hashmap'keySet, adding all the res with the owner's name. 
+---------------------------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    private int findParent (int[] parents, int idx) {
+        int root = idx;
+        while (root != parents[root]) {
+            root = parents[root];
+        }
+        
+        while (idx != root) {
+            int next = parents[idx];
+            parents[idx] = root;
+            idx = next;
+        }
+        return root;
+    }
+    
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        Map<String, Integer> owner = new HashMap<>();
+        int[] parents = new int[accounts.size()];
+        for (int i = 0; i < accounts.size(); i++) {
+            parents[i] = i;
+        }
+        
+        for (int i = 0; i < accounts.size(); i++) {
+            for (int j = 1; j < accounts.get(i).size(); j++) {
+                // get every email address from each account
+                String email = accounts.get(i).get(j); 
+                if (owner.containsKey(email)) {
+                    int person = owner.get(email);
+                    int p1 = findParent( parents, i);
+                    int p2 = findParent( parents, person);
+                    if (p1 != p2){
+                        parents[p2] = p1;
+                    }
+                }
+                else{
+                    owner.put(email, i);
+                }
+            }
+        }
+        // store emails to index, for ordering sort, use TreeSet
+        // Other option can use hashset, then Collections.sort it. 
+        Map<Integer, TreeSet<String>> users = new HashMap<>(); 
+        for (int i = 0; i < accounts.size(); i++) {
+            int parent = findParent (parents, i);
+            List<String> emails = accounts.get(i);
+            users.putIfAbsent(parent, new TreeSet<String>());
+            users.get(parent).addAll(emails.subList(1, emails.size()));
+        }
+        
+        List<List<String>> res = new ArrayList<List<String>>();
+        for (int idx : users.keySet()) {
+            String name = accounts.get(idx).get(0); // name at index 0;
+            List<String> emails = new ArrayList<>(users.get(idx));
+            emails.add(0, name);
+            res.add(emails);
+        }
+        return res;
+    }
+}
