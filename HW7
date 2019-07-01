@@ -385,3 +385,126 @@ class Solution {
         return res;
     }
 }
+---------------------------------------------------------------------------------------------------------------------------------------------
+803. Bricks Falling When Hit
+We have a grid of 1s and 0s; the 1s in a cell represent bricks.  A brick will not drop if and only if it is directly connected to the top of the grid, or at least one of its (4-way) adjacent bricks will not drop.
+We will do some erasures sequentially. Each time we want to do the erasure at the location (i, j), the brick (if it exists) on that location will disappear, and then some other bricks may drop because of that erasure.
+Return an array representing the number of bricks that will drop after each erasure in sequence.
+Example 1:
+Input: 
+grid = [[1,0,0,0],[1,1,1,0]]
+hits = [[1,0]]
+Output: [2]
+Explanation: 
+If we erase the brick at (1, 0), the brick at (1, 1) and (1, 2) will drop. So we should return 2.
+---------------------------------------------------------------------------------------------------------------------------------------------
+Sol:
+class Solution {
+    public int[] hitBricks(int[][] grid, int[][] hits) {
+        int R = grid.length, C = grid[0].length;
+        int[] dr = {1,0,-1,0};
+        int[] dc = {0,1,0,-1};
+        
+        int[][] A = new int[R][C];
+        for (int r = 0; r < R; r++){
+            A[r] = grid[r].clone();
+        }
+        for (int[] hit : hits) {
+            A[hit[0]][hit[1]] = 0;
+        }
+        
+        UnionFind uf = new UnionFind(R * C + 1);
+        for (int r = 0; r < R; r++) {
+            for (int c = 0; c < C; c++) {
+                if (A[r][c] == 1) {
+                    int i = r * C + c;
+                    if (r == 0) 
+                        uf.union(i, R*C);
+                    // check if the upper brick is present or not, if present, union the cur with the upper brick
+                    if (r > 0 && A[r-1][c] == 1)
+                        uf.union(i, (r-1) * C + c);
+                    // if the left brick of cur is present, then union the left brick with the cur
+                    if (c > 0 && A[r][c-1] == 1)
+                        uf.union(i, r * C + c - 1);
+                }
+            }
+        }
+        int t = hits.length;
+        int[]ans = new int[t];
+        t--;
+        while (t >= 0) {
+            int r = hits[t][0];
+            int c = hits[t][1];
+            int preRoof = uf.top();
+            if(grid[r][c] == 0) {
+                t--;
+            }else{
+                int i = r * C + c;
+                for (int k = 0; k < 4; k++) {
+                    int nr = r + dr[k];
+                    int nc = c + dc[k];
+                    if (nr >= 0 && nr < R && nc >= 0 && nc < C && A[nr][nc] == 1)
+                        uf.union(i, nr*C + nc);
+                }
+                if (r == 0)
+                    uf.union(i, R*C);
+                A[r][c] = 1;
+                ans[t--] = Math.max(0, uf.top() - preRoof -1);
+            }
+        } 
+        return ans;
+    }
+}
+
+class UnionFind {
+    int parent[];
+    int rank[];
+    int sz[];
+    
+    public UnionFind (int N) {
+        parent = new int[N];
+        for (int i = 0; i < N; i++) {
+            parent[i] = i;
+        }
+        rank = new int[N];
+        sz = new int[N];
+        Arrays.fill(sz, 1); // initial size all 1
+    }
+    
+    public int find (int x) {
+        int root = x;
+        while (parent[root] != root){
+            root = parent[root];
+        }
+        
+        while (root != x) {
+            int next = parent[x];
+            parent[x] = root;
+            x = next;
+        }
+        return root;
+    }
+    
+    public void union (int x, int y) {
+        int xr = find(x);
+        int yr = find(y);
+        if (xr == yr)
+            return;
+        if (rank[xr] < rank[yr]) {
+            int tmp = yr;
+            yr = xr;
+            xr = tmp;
+        }
+        if (rank[xr] == rank[yr])
+            rank[xr]++;
+        parent[yr] = xr;
+        sz[xr] += sz[yr];
+    }
+    public int size (int x) {
+        return sz[find(x)];
+    }
+    
+    public int top() {
+        return size(sz.length - 1) - 1;
+    }
+}
